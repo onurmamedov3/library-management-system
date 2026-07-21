@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: library management system
+
+  datasource:
+    url:
+    username:
+    password:
