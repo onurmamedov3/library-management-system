@@ -61,7 +61,6 @@ class BookServiceIntegrationTest {
 			assertEquals("Clean Code", response.title());
 			assertEquals("978-0132350884", response.isbn());
 
-			// Verify it's actually in the database
 			assertTrue(bookRepository.existsByIsbn("978-0132350884"));
 		}
 
@@ -132,7 +131,6 @@ class BookServiceIntegrationTest {
 
 			assertEquals("New Title", updated.title());
 
-			// Verify the update persisted
 			Book fromDb = bookRepository.findByIsbn("978-0132350884").orElseThrow();
 			assertEquals("New Title", fromDb.getTitle());
 		}
