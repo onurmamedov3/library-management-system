@@ -159,7 +159,7 @@ class BookServiceIntegrationTest {
 			bookService.delete("978-0132350884");
 
 			Book fromDb = bookRepository.findByIsbn("978-0132350884").orElseThrow();
-			assertFalse(fromDb.isIsActive());
+			assertFalse(fromDb.isActive());
 		}
 
 		@Test

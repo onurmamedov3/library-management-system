@@ -52,7 +52,7 @@ class BookServiceUnitTest {
 		sampleBook.setIsbn("978-0132350884");
 		sampleBook.setDescription("A handbook of agile software craftsmanship");
 		sampleBook.setPublicationDate(LocalDate.of(2008, 8, 1));
-		sampleBook.setIsActive(true);
+		sampleBook.setActive(true);
 
 		sampleResponse = new BookResponse(
 				sampleBook.getId(),
@@ -224,13 +224,13 @@ class BookServiceUnitTest {
 		@DisplayName("should soft-delete book by setting isActive to false")
 		void shouldSoftDeleteBook() {
 			String isbn = "978-0132350884";
-			sampleBook.setIsActive(true);
+			sampleBook.setActive(true);
 
 			when(bookRepository.findByIsbn(isbn)).thenReturn(Optional.of(sampleBook));
 
 			bookService.delete(isbn);
 
-			assertFalse(sampleBook.isIsActive());
+			assertFalse(sampleBook.isActive());
 
 			verify(bookRepository).save(sampleBook);
 		}

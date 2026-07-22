@@ -31,7 +31,7 @@ public class Book {
 	private String description;
 
 	@Column(nullable = false)
-	private boolean IsActive;
+	private boolean isActive;
 
 	@Column(nullable = false)
 	private LocalDate publicationDate;

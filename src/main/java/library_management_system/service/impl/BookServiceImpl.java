@@ -65,7 +65,7 @@ public class BookServiceImpl implements BookService {
 	Book book = bookRepository.findByIsbn(isbn)
 			.orElseThrow(() -> new RuntimeException("Book with ISBN " + isbn + " does not exist"));
 
-	book.setIsActive(false);
+	book.setActive(false);
 
 	bookRepository.save(book);
 	}
