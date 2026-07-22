@@ -3,6 +3,8 @@ package library_management_system.service.impl;
 import library_management_system.dto.request.BookRequest;
 import library_management_system.dto.response.BookResponse;
 import library_management_system.entity.Book;
+import library_management_system.exception.ResourceAlreadyExistsException;
+import library_management_system.exception.ResourceNotFoundException;
 import library_management_system.mapper.BookMapper;
 import library_management_system.repository.BookRepository;
 import library_management_system.service.BookService;
@@ -28,7 +30,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public BookResponse getById(UUID id) {
-		Book book = bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+		Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 
 		return bookMapper.toResponse(book);
 	}
@@ -37,7 +39,7 @@ public class BookServiceImpl implements BookService {
 	public BookResponse create(BookRequest request) {
 
 		if (bookRepository.existsByIsbn(request.isbn())) {
-			throw new RuntimeException("Book with ISBN " + request.isbn() + " already exists");
+			throw new ResourceAlreadyExistsException("Book with ISBN " + request.isbn() + " already exists");
 		}
 
 		Book book = bookMapper.toEntity(request);
@@ -50,7 +52,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public BookResponse update(String isbn, BookRequest request) {
 		Book book = bookRepository.findByIsbn(isbn)
-				.orElseThrow(() -> new RuntimeException("Book with ISBN " + isbn + " does not exist"));
+				.orElseThrow(() -> new ResourceNotFoundException("Book with ISBN " + isbn + " does not exist"));
 
 		bookMapper.updateEntity(request, book);
 
@@ -63,7 +65,7 @@ public class BookServiceImpl implements BookService {
 	public void delete(String isbn) {
 
 	Book book = bookRepository.findByIsbn(isbn)
-			.orElseThrow(() -> new RuntimeException("Book with ISBN " + isbn + " does not exist"));
+			.orElseThrow(() -> new ResourceNotFoundException("Book with ISBN " + isbn + " does not exist"));
 
 	book.setActive(false);
 

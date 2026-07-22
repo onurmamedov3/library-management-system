@@ -30,7 +30,7 @@ public class Author {
 	@Column(nullable = false)
 	private String email;
 
-	@Column(nullable = false,unique = true)
+	@Column(nullable = false)
 	private boolean isActive;
 
 	@ManyToMany(mappedBy = "authors")

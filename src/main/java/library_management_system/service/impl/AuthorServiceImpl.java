@@ -3,6 +3,8 @@ package library_management_system.service.impl;
 import library_management_system.dto.request.AuthorRequest;
 import library_management_system.dto.response.AuthorResponse;
 import library_management_system.entity.Author;
+import library_management_system.exception.ResourceAlreadyExistsException;
+import library_management_system.exception.ResourceNotFoundException;
 import library_management_system.mapper.AuthorMapper;
 import library_management_system.repository.AuthorRepository;
 import library_management_system.service.AuthorService;
@@ -28,7 +30,7 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	public AuthorResponse getById(UUID uuid){
-		Author author = authorRepository.findById(uuid).orElseThrow(() -> new RuntimeException("Author with " + uuid + " not found"));
+		Author author = authorRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Author with " + uuid + " not found"));
 		return authorMapper.toResponse(author);
 	}
 
@@ -36,7 +38,7 @@ public class AuthorServiceImpl implements AuthorService {
 	public AuthorResponse create(AuthorRequest request){
 
 		if(authorRepository.existsByEmail(request.email())){
-			throw new RuntimeException("Author with " + request.email() + " already exists");
+			throw new ResourceAlreadyExistsException("Author with " + request.email() + " already exists");
 		}
 
 		Author author = authorMapper.toEntity(request);
@@ -49,7 +51,7 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	public AuthorResponse update(String email, AuthorRequest request){
 		Author author =  authorRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Author with " + email + " does not exist"));
+				.orElseThrow(() -> new ResourceNotFoundException("Author with " + email + " does not exist"));
 
 		authorMapper.updateEntity(request, author);
 
@@ -61,7 +63,7 @@ public class AuthorServiceImpl implements AuthorService {
 	@Override
 	public void delete(String email){
 		Author author =  authorRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Author with " + email + " does not exist"));
+				.orElseThrow(() -> new ResourceNotFoundException("Author with " + email + " does not exist"));
 
 		author.setActive(false);
 

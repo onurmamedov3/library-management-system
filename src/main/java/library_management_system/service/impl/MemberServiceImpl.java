@@ -3,6 +3,8 @@ package library_management_system.service.impl;
 import library_management_system.dto.request.MemberRequest;
 import library_management_system.dto.response.MemberResponse;
 import library_management_system.entity.Member;
+import library_management_system.exception.ResourceAlreadyExistsException;
+import library_management_system.exception.ResourceNotFoundException;
 import library_management_system.mapper.MemberMapper;
 import library_management_system.repository.MemberRepository;
 import library_management_system.service.MemberService;
@@ -29,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public MemberResponse getById(UUID id) {
 		Member member = memberRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Member not found with id: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));
 
 		return memberMapper.toResponse(member);
 	}
@@ -38,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
 	public MemberResponse create(MemberRequest request) {
 
 		if (memberRepository.existsByEmail(request.email())) {
-			throw new RuntimeException("Member with email " + request.email() + " already exists");
+			throw new ResourceAlreadyExistsException("Member with email " + request.email() + " already exists");
 		}
 
 		Member member = memberMapper.toEntity(request);
@@ -52,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public MemberResponse update(String email, MemberRequest request) {
 		Member member = memberRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Member with email " + email + " does not exist"));
+				.orElseThrow(() -> new ResourceNotFoundException("Member with email " + email + " does not exist"));
 
 		memberMapper.updateEntity(request, member);
 
@@ -64,7 +66,7 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public void delete(String email) {
 		Member member = memberRepository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Member with email " + email + " does not exist"));
+				.orElseThrow(() -> new ResourceNotFoundException("Member with email " + email + " does not exist"));
 
 		member.setActive(false);
 
