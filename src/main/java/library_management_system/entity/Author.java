@@ -27,6 +27,12 @@ public class Author {
 	@Column(nullable = false)
 	private String lastName;
 
+	@Column(nullable = false)
+	private String email;
+
+	@Column(nullable = false,unique = true)
+	private boolean isActive;
+
 	@ManyToMany(mappedBy = "authors")
 	private List<Book> books = new ArrayList<>();
 
