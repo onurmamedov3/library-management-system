@@ -30,4 +30,7 @@ public class Member {
 
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
+
+	@Column(nullable = false)
+	private boolean isActive;
 }
