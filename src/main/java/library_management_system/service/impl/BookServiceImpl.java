@@ -54,6 +54,10 @@ public class BookServiceImpl implements BookService {
 		Book book = bookRepository.findByIsbn(isbn)
 				.orElseThrow(() -> new ResourceNotFoundException("Book with ISBN " + isbn + " does not exist"));
 
+		if(!isbn.equals(request.isbn()) && bookRepository.existsByIsbn(request.isbn())){
+			throw new ResourceAlreadyExistsException("Book with ISBN " + request.isbn() + " already exists");
+		}
+
 		bookMapper.updateEntity(request, book);
 
 		bookRepository.save(book);

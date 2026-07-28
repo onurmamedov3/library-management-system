@@ -6,8 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -42,5 +42,5 @@ public class Book {
 		joinColumns = @JoinColumn(name = "book_id"),
 		inverseJoinColumns = @JoinColumn(name = "author_id")
 	)
-	private List<Author> authors = new ArrayList<>();
+	private Set<Author> authors = new HashSet<>();
 }
