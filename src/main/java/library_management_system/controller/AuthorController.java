@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class AuthorController {
 	@GetMapping
 	@Operation(summary = "Get all authors", description = "Returns a paginated list of all authors")
 	@ApiResponse(responseCode = "200", description = "Authors retrieved successfully")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Page<AuthorResponse>> getAllAuthors(@PageableDefault(size = 20) Pageable pageable) {
 		return ResponseEntity.ok(authorService.getAll(pageable));
 	}
@@ -39,6 +41,7 @@ public class AuthorController {
 		@ApiResponse(responseCode = "200", description = "Author found"),
 		@ApiResponse(responseCode = "404", description = "Author not found")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<AuthorResponse> getById(@PathVariable UUID id) {
 		return ResponseEntity.ok(authorService.getById(id));
 	}
@@ -50,6 +53,7 @@ public class AuthorController {
 		@ApiResponse(responseCode = "400", description = "Invalid request data"),
 		@ApiResponse(responseCode = "409", description = "Author with this email already exists")
 	})
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<AuthorResponse> createAuthor(@Valid @RequestBody AuthorRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(authorService.create(request));
 	}
@@ -61,6 +65,7 @@ public class AuthorController {
 		@ApiResponse(responseCode = "400", description = "Invalid request data"),
 		@ApiResponse(responseCode = "404", description = "Author not found")
 	})
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<AuthorResponse> updateAuthor(@PathVariable String email, @Valid @RequestBody AuthorRequest request) {
 		return ResponseEntity.ok(authorService.update(email, request));
 	}
@@ -71,6 +76,7 @@ public class AuthorController {
 		@ApiResponse(responseCode = "204", description = "Author deleted successfully"),
 		@ApiResponse(responseCode = "404", description = "Author not found")
 	})
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Void> deleteAuthor(@PathVariable String email) {
 		authorService.delete(email);
 		return ResponseEntity.noContent().build();

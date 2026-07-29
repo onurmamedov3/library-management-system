@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class MemberController {
 	@GetMapping
 	@Operation(summary = "Get all members", description = "Returns a paginated list of all members")
 	@ApiResponse(responseCode = "200", description = "Members retrieved successfully")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Page<MemberResponse>> getAll(@PageableDefault(size = 20) Pageable pageable) {
 		return ResponseEntity.ok(memberService.getAll(pageable));
 	}
@@ -39,6 +41,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "200", description = "Member found"),
 		@ApiResponse(responseCode = "404", description = "Member not found")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<MemberResponse> getById(@PathVariable UUID id) {
 		return ResponseEntity.ok(memberService.getById(id));
 	}
@@ -50,6 +53,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "400", description = "Invalid request data"),
 		@ApiResponse(responseCode = "409", description = "Member with this email already exists")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<MemberResponse> create(@Valid @RequestBody MemberRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(memberService.create(request));
 	}
@@ -61,6 +65,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "400", description = "Invalid request data"),
 		@ApiResponse(responseCode = "404", description = "Member not found")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<MemberResponse> update(@PathVariable String email, @Valid @RequestBody MemberRequest request) {
 		return ResponseEntity.ok(memberService.update(email, request));
 	}
@@ -71,6 +76,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "204", description = "Member deleted successfully"),
 		@ApiResponse(responseCode = "404", description = "Member not found")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Void> delete(@PathVariable String email) {
 		memberService.delete(email);
 		return ResponseEntity.noContent().build();

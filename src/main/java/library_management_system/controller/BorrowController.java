@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class BorrowController {
 	@GetMapping
 	@Operation(summary = "Get all borrow records", description = "Returns a paginated list of all borrow records")
 	@ApiResponse(responseCode = "200", description = "Borrow records retrieved successfully")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Page<BorrowResponse>> getAll(@PageableDefault(size = 20) Pageable pageable) {
 		return ResponseEntity.ok(borrowService.getAll(pageable));
 	}
@@ -39,6 +41,7 @@ public class BorrowController {
 		@ApiResponse(responseCode = "200", description = "Borrow record found"),
 		@ApiResponse(responseCode = "404", description = "Borrow record not found")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<BorrowResponse> getById(@PathVariable UUID id) {
 		return ResponseEntity.ok(borrowService.getById(id));
 	}
@@ -51,6 +54,7 @@ public class BorrowController {
 		@ApiResponse(responseCode = "404", description = "Member or book not found"),
 		@ApiResponse(responseCode = "409", description = "Book is already borrowed")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<BorrowResponse> borrowBook(@Valid @RequestBody BorrowRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(borrowService.borrowBook(request));
 	}
@@ -62,6 +66,7 @@ public class BorrowController {
 		@ApiResponse(responseCode = "404", description = "Borrow record not found"),
 		@ApiResponse(responseCode = "409", description = "Book has already been returned")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<BorrowResponse> returnBook(@PathVariable UUID id) {
 		return ResponseEntity.ok(borrowService.returnBook(id));
 	}

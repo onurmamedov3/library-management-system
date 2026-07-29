@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class BookController {
 	@GetMapping
 	@Operation(summary = "Get all books", description = "Returns a paginated list of all active books")
 	@ApiResponse(responseCode = "200", description = "Books retrieved successfully")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<Page<BookResponse>> getAll(@PageableDefault(size = 20) Pageable pageable) {
 		return ResponseEntity.ok(bookService.getAll(pageable));
 	}
@@ -39,6 +41,7 @@ public class BookController {
 		@ApiResponse(responseCode = "200", description = "Book found"),
 		@ApiResponse(responseCode = "404", description = "Book not found")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<BookResponse> getById(@PathVariable UUID id) {
 		return ResponseEntity.ok(bookService.getById(id));
 	}
@@ -50,6 +53,7 @@ public class BookController {
 		@ApiResponse(responseCode = "400", description = "Invalid request data"),
 		@ApiResponse(responseCode = "409", description = "Book with this ISBN already exists")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<BookResponse> createBook(@Valid @RequestBody BookRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(bookService.create(request));
 	}
@@ -60,6 +64,7 @@ public class BookController {
 		@ApiResponse(responseCode = "204", description = "Book deleted successfully"),
 		@ApiResponse(responseCode = "404", description = "Book not found")
 	})
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Void> delete(@PathVariable String isbn) {
 		bookService.delete(isbn);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -72,6 +77,7 @@ public class BookController {
 		@ApiResponse(responseCode = "400", description = "Invalid request data"),
 		@ApiResponse(responseCode = "404", description = "Book not found")
 	})
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<BookResponse> update(@PathVariable String isbn, @Valid @RequestBody BookRequest request) {
 		return ResponseEntity.ok(bookService.update(isbn, request));
 	}
