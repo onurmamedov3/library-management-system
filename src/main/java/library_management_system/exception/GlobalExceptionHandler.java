@@ -43,6 +43,17 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
 
+	@ExceptionHandler(AuthException.class)
+	public ResponseEntity<ErrorResponse> handleAuthException(AuthException ex) {
+		ErrorResponse response = new ErrorResponse(
+				HttpStatus.UNAUTHORIZED.value(),
+				"Unauthorized",
+				ex.getMessage()
+		);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+	}
+
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
 		Map<String, String> errors = new HashMap<>();
