@@ -40,6 +40,13 @@ public class AuthController {
 
 	@PostMapping("/logout")
 	public ResponseEntity<Void> logout(HttpServletRequest request, @RequestBody Map<String, String> body){
+
+		String authHeader = request.getHeader("Authorization");
+
+		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+			throw new AuthException("Authorization header is missing or invalid");
+		}
+
 		String accessToken = request.getHeader("Authorization").substring(7);
 		String refreshToken = body.get("refreshToken");
 

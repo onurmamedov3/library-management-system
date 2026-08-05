@@ -38,6 +38,11 @@ public class User implements UserDetails {
 	private boolean isActive;
 
 	@Override
+	public boolean isEnabled(){
+		return isActive;
+	}
+
+	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
 	}
