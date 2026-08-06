@@ -15,11 +15,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookServiceImpl implements BookService {
 
 	private final BookRepository bookRepository;
@@ -27,11 +29,13 @@ public class BookServiceImpl implements BookService {
 	private final BookMapper bookMapper;
 
 	@Override
+	@Transactional(readOnly = true)
 	public Page<BookResponse> getAll(Pageable pageable) {
 		return bookRepository.findAll(pageable).map(bookMapper::toResponse);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public BookResponse getById(UUID id) {
 		Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 
@@ -39,6 +43,7 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Page<BookResponse> search(BookFilterRequest filter,Pageable pageable) {
 		Specification<Book> specification = BookSpecification.fromFilter(filter);
 		return bookRepository.findAll(specification, pageable).map(bookMapper::toResponse);

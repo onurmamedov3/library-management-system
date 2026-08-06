@@ -12,11 +12,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberServiceImpl implements MemberService {
 
 	private final MemberRepository memberRepository;
@@ -24,11 +26,13 @@ public class MemberServiceImpl implements MemberService {
 	private final MemberMapper memberMapper;
 
 	@Override
+	@Transactional(readOnly = true)
 	public Page<MemberResponse> getAll(Pageable pageable) {
 		return memberRepository.findAll(pageable).map(memberMapper::toResponse);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public MemberResponse getById(UUID id) {
 		Member member = memberRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Member not found with id: " + id));

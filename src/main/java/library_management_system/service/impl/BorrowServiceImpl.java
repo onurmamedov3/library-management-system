@@ -17,12 +17,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BorrowServiceImpl implements BorrowService {
 
 	private final BorrowRepository borrowRepository;
@@ -34,11 +36,13 @@ public class BorrowServiceImpl implements BorrowService {
 	private final BorrowMapper borrowMapper;
 
 	@Override
+	@Transactional(readOnly = true)
 	public Page<BorrowResponse> getAll(Pageable pageable) {
 		return borrowRepository.findAll(pageable).map(borrowMapper::toResponse);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public BorrowResponse getById(UUID id) {
 		Borrow borrow = borrowRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Borrow record not found with id: " + id));

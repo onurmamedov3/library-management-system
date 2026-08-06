@@ -12,11 +12,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthorServiceImpl implements AuthorService {
 
 	private final AuthorRepository authorRepository;
@@ -24,11 +26,13 @@ public class AuthorServiceImpl implements AuthorService {
 	private final AuthorMapper authorMapper;
 
 	@Override
+	@Transactional(readOnly = true)
 	public Page<AuthorResponse> getAll(Pageable pageable){
 		return authorRepository.findAll(pageable).map(authorMapper::toResponse);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public AuthorResponse getById(UUID uuid){
 		Author author = authorRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Author with " + uuid + " not found"));
 		return authorMapper.toResponse(author);

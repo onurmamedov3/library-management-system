@@ -17,12 +17,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthServiceImpl implements AuthService {
 
 	private final UserRepository userRepository;
