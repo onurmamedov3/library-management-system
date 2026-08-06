@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import library_management_system.dto.request.BookFilterRequest;
 import library_management_system.dto.request.BookRequest;
 import library_management_system.dto.response.BookResponse;
 import library_management_system.service.BookService;
@@ -44,6 +45,16 @@ public class BookController {
 	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<BookResponse> getById(@PathVariable UUID id) {
 		return ResponseEntity.ok(bookService.getById(id));
+	}
+
+	@GetMapping("/search")
+	@Operation(summary = "Search books", description = "Search books with optional filters: title, authorName, ISBN, publishedFrom, publishedTo")
+	@ApiResponse(responseCode = "200", description = "Search results retrieved successfully")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<Page<BookResponse>> search(
+			BookFilterRequest filter,
+			@PageableDefault(size = 20) Pageable pageable) {
+		return ResponseEntity.ok(bookService.search(filter, pageable));
 	}
 
 	@PostMapping

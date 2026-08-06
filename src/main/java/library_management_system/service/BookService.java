@@ -1,5 +1,6 @@
 package library_management_system.service;
 
+import library_management_system.dto.request.BookFilterRequest;
 import library_management_system.dto.request.BookRequest;
 import library_management_system.dto.response.BookResponse;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,8 @@ import java.util.UUID;
 
 public interface BookService {
 	Page<BookResponse> getAll(Pageable pageable);
+
+	Page<BookResponse> search(BookFilterRequest filter, Pageable pageable);
 
 	BookResponse getById(UUID id);
 

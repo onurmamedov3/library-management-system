@@ -1,5 +1,6 @@
 package library_management_system.service.impl;
 
+import library_management_system.dto.request.BookFilterRequest;
 import library_management_system.dto.request.BookRequest;
 import library_management_system.dto.response.BookResponse;
 import library_management_system.entity.Book;
@@ -7,10 +8,12 @@ import library_management_system.exception.ResourceAlreadyExistsException;
 import library_management_system.exception.ResourceNotFoundException;
 import library_management_system.mapper.BookMapper;
 import library_management_system.repository.BookRepository;
+import library_management_system.repository.specification.BookSpecification;
 import library_management_system.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -33,6 +36,12 @@ public class BookServiceImpl implements BookService {
 		Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 
 		return bookMapper.toResponse(book);
+	}
+
+	@Override
+	public Page<BookResponse> search(BookFilterRequest filter,Pageable pageable) {
+		Specification<Book> specification = BookSpecification.fromFilter(filter);
+		return bookRepository.findAll(specification, pageable).map(bookMapper::toResponse);
 	}
 
 	@Override
