@@ -1,5 +1,7 @@
 package library_management_system.config;
 
+import jakarta.servlet.http.HttpServletResponse;
+import library_management_system.exception.ErrorResponse;
 import library_management_system.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +16,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebSecurity
@@ -26,10 +31,14 @@ public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(HttpSecurity http,AuthenticationEntryPoint authenticationEntryPoint, AccessDeniedHandler accessDeniedHandler) throws Exception {
 		http
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.exceptionHandling(ex -> ex
+					.authenticationEntryPoint(authenticationEntryPoint)
+					.accessDeniedHandler(accessDeniedHandler)
+			)
 			.authorizeHttpRequests(auth -> auth
 					.requestMatchers("/api/v1/auth/login").permitAll()
 					.requestMatchers("/api/v1/auth/refresh").permitAll()
@@ -44,6 +53,28 @@ public class SecurityConfig {
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
 		return configuration.getAuthenticationManager();
+	}
+
+	@Bean
+	public AuthenticationEntryPoint authenticationEntryPoint(ObjectMapper objectMapper){
+		return ((request, response, authException) -> {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setContentType("application/json");
+
+			ErrorResponse errorResponse = new ErrorResponse(401, "Unauthorized","Authentication is required");
+			response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+		});
+	}
+
+	@Bean
+	public AccessDeniedHandler accessDeniedHandler(ObjectMapper objectMapper) {
+		return (request, response, accessDeniedException) -> {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			response.setContentType("application/json");
+
+			ErrorResponse errorResponse = new ErrorResponse(403, "Forbidden", "You do not have permission to access this resource");
+			response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+		};
 	}
 
 	@Bean
